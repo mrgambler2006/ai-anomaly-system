@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Anomaly Detection Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <main class="page">
+    <section class="hero-panel">
+      <div class="hero-copy">
+        <p class="eyebrow">Unified Monitoring Workspace</p>
+        <h1>AI Anomaly Detection Control Center</h1>
+        <p class="lead">
+          Real-time monitoring, anomaly intelligence, explanation-driven alerts, and prediction signals in one
+          interactive dashboard.
+        </p>
+        <div class="hero-tags">
+          <span>Real-time monitoring</span>
+          <span>ML anomaly detection</span>
+          <span>Explanation engine</span>
+          <span>Prediction system</span>
+          <span>Interactive dashboard</span>
+          <span>Graph visualization</span>
+        </div>
+      </div>
+
+      <aside class="hero-side">
+        <div class="signal-card">
+          <span class="label">System Health</span>
+          <strong id="health-score">--</strong>
+          <p id="health-caption">Waiting for live telemetry...</p>
+        </div>
+        <div class="hero-actions">
+          <button id="normal-btn" class="btn btn-secondary">Normal Mode</button>
+          <button id="high-btn" class="btn btn-primary">High Load Mode</button>
+          <button id="refresh-btn" class="btn btn-ghost">Refresh Now</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="feature-grid">
+      <article class="feature-card">
+        <span class="feature-kicker">01</span>
+        <h2>Live Telemetry</h2>
+        <p>CPU, RAM, and disk usage refresh continuously with auto-update controls.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-kicker">02</span>
+        <h2>Detection Engine</h2>
+        <p>Incoming values are scored instantly to flag unusual operating patterns.</p>
+      </article>
+      <article class="feature-card">
+        <span class="feature-kicker">03</span>
+        <h2>Explain + Predict</h2>
+        <p>The dashboard shows why a spike happened and what risk level it suggests next.</p>
+      </article>
+    </section>
+
+    <section class="status-band">
+      <div>
+        <span class="label">System Status</span>
+        <h2 id="status">Waiting for data...</h2>
+      </div>
+      <div class="status-meta">
+        <div class="status-box">
+          <span class="label">Current Mode</span>
+          <strong id="mode-value">normal</strong>
+        </div>
+        <div class="status-box">
+          <span class="label">Last Refresh</span>
+          <strong id="last-refresh">--</strong>
+        </div>
+        <div class="status-box">
+          <span class="label">Auto Refresh</span>
+          <label class="toggle">
+            <input type="checkbox" id="auto-refresh" checked>
+            <span>Every 2 seconds</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      <article class="metric-card cpu">
+        <div class="metric-head">
+          <span class="label">CPU</span>
+          <strong id="cpu-value">--%</strong>
+        </div>
+        <div class="meter"><span id="cpu-bar"></span></div>
+      </article>
+      <article class="metric-card ram">
+        <div class="metric-head">
+          <span class="label">RAM</span>
+          <strong id="ram-value">--%</strong>
+        </div>
+        <div class="meter"><span id="ram-bar"></span></div>
+      </article>
+      <article class="metric-card disk">
+        <div class="metric-head">
+          <span class="label">Disk</span>
+          <strong id="disk-value">--%</strong>
+        </div>
+        <div class="meter"><span id="disk-bar"></span></div>
+      </article>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="panel chart-panel">
+        <div class="panel-head">
+          <div>
+            <span class="label">Graph Visualization</span>
+            <h3>Live Resource Trend</h3>
+          </div>
+          <p class="panel-note">Rolling 12-point performance stream</p>
+        </div>
+        <div class="chart-shell">
+          <canvas id="chart"></canvas>
+        </div>
+      </article>
+
+      <article class="panel insight-panel">
+        <div class="panel-head">
+          <div>
+            <span class="label">Decision Engine</span>
+            <h3>Current Analysis</h3>
+          </div>
+        </div>
+        <div class="insight-stack">
+          <div class="insight-row">
+            <span class="label-inline">Anomaly</span>
+            <span id="anomaly-value" class="pill">--</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Reason</span>
+            <span id="reason-value">Waiting for data...</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Prediction</span>
+            <span id="prediction-value">Waiting for data...</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Timestamp</span>
+            <span id="timestamp-value">--</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="dashboard-grid secondary-grid">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="label">Raw Output</span>
+            <h3>Latest API Response</h3>
+          </div>
+        </div>
+        <pre id="json-output">{}</pre>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="label">Alert Trail</span>
+            <h3>Anomaly History</h3>
+          </div>
+        </div>
+        <ul id="history" class="history-list">
+          <li class="muted">No anomalies recorded yet.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
