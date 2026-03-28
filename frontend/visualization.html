@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph Visualization</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <main class="page">
+    <nav class="top-nav">
+      <a href="/">Dashboard</a>
+      <a href="/page/monitoring">Monitoring</a>
+      <a href="/page/anomaly">Anomaly</a>
+      <a href="/page/explanation">Explanation</a>
+      <a href="/page/prediction">Prediction</a>
+    </nav>
+
+    <section class="sub-hero">
+      <div>
+        <p class="eyebrow">Feature Workspace</p>
+        <h1>Graph Visualization</h1>
+        <p class="lead">A presentation-ready chart screen for live trend inspection and resource tracking.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="refresh-btn" class="btn btn-primary">Refresh Chart</button>
+      </div>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="panel-head">
+        <div>
+          <span class="label">Visualization</span>
+          <h3>Live Resource Trend</h3>
+        </div>
+        <div class="status-box">
+          <span class="label">Auto Refresh</span>
+          <label class="toggle">
+            <input type="checkbox" id="auto-refresh" checked>
+            <span>Every 10 seconds</span>
+          </label>
+        </div>
+      </div>
+      <div class="chart-shell large-chart">
+        <canvas id="chart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

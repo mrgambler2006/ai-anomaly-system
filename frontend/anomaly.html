@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anomaly Detection</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="page">
+    <nav class="top-nav">
+      <a href="/">Dashboard</a>
+      <a href="/page/monitoring">Monitoring</a>
+      <a href="/page/explanation">Explanation</a>
+      <a href="/page/prediction">Prediction</a>
+      <a href="/page/visualization">Visualization</a>
+    </nav>
+
+    <section class="sub-hero">
+      <div>
+        <p class="eyebrow">Feature Workspace</p>
+        <h1>ML Anomaly Detection</h1>
+        <p class="lead">Detection status, risk context, and anomaly history on a dedicated screen.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="refresh-btn" class="btn btn-primary">Refresh Detection</button>
+      </div>
+    </section>
+
+    <section class="dashboard-grid secondary-grid">
+      <article class="panel insight-panel">
+        <div class="panel-head">
+          <div>
+            <span class="label">Detection Result</span>
+            <h3>Current Analysis</h3>
+          </div>
+        </div>
+        <div class="insight-stack">
+          <div class="insight-row">
+            <span class="label-inline">Anomaly</span>
+            <span id="anomaly-value" class="pill">--</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Mode</span>
+            <span id="mode-value">--</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Reason</span>
+            <span id="reason-value">Waiting for data...</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Prediction</span>
+            <span id="prediction-value">Waiting for data...</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="label">Alert Trail</span>
+            <h3>Anomaly History</h3>
+          </div>
+        </div>
+        <ul id="history" class="history-list">
+          <li class="muted">No anomalies recorded yet.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

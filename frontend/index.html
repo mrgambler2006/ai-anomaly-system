@@ -3,177 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Anomaly Detection Dashboard</title>
+  <title>AI Monitoring Platform</title>
   <link rel="stylesheet" href="/static/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <main class="page">
-    <section class="hero-panel">
-      <div class="hero-copy">
-        <p class="eyebrow">Unified Monitoring Workspace</p>
-        <h1>AI Anomaly Detection Control Center</h1>
-        <p class="lead">
-          Real-time monitoring, anomaly intelligence, explanation-driven alerts, and prediction signals in one
-          interactive dashboard.
-        </p>
-        <div class="hero-tags">
-          <span>Real-time monitoring</span>
-          <span>ML anomaly detection</span>
-          <span>Explanation engine</span>
-          <span>Prediction system</span>
-          <span>Interactive dashboard</span>
-          <span>Graph visualization</span>
+  <main class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-mark">AI</span>
+        <div>
+          <p class="sidebar-label">Control Panel</p>
+          <h2>Monitoring Suite</h2>
         </div>
       </div>
 
-      <aside class="hero-side">
-        <div class="signal-card">
-          <span class="label">System Health</span>
-          <strong id="health-score">--</strong>
-          <p id="health-caption">Waiting for live telemetry...</p>
-        </div>
-        <div class="hero-actions">
-          <button id="normal-btn" class="btn btn-secondary">Normal Mode</button>
-          <button id="high-btn" class="btn btn-primary">High Load Mode</button>
-          <button id="refresh-btn" class="btn btn-ghost">Refresh Now</button>
-        </div>
-      </aside>
-    </section>
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" href="/">
+          <span>Dashboard Home</span>
+          <small>Overview</small>
+        </a>
+        <a class="sidebar-link" href="/page/monitoring">
+          <span>Real-Time Monitoring</span>
+          <small>Live metrics</small>
+        </a>
+        <a class="sidebar-link" href="/page/anomaly">
+          <span>ML Anomaly Detection</span>
+          <small>Alerts</small>
+        </a>
+        <a class="sidebar-link" href="/page/explanation">
+          <span>Explanation Engine</span>
+          <small>Reasoning</small>
+        </a>
+        <a class="sidebar-link" href="/page/prediction">
+          <span>Prediction System</span>
+          <small>Risk forecast</small>
+        </a>
+        <a class="sidebar-link" href="/page/visualization">
+          <span>Graph Visualization</span>
+          <small>Charts</small>
+        </a>
+      </nav>
 
-    <section class="feature-grid">
-      <article class="feature-card">
-        <span class="feature-kicker">01</span>
-        <h2>Live Telemetry</h2>
-        <p>CPU, RAM, and disk usage refresh continuously with auto-update controls.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-kicker">02</span>
-        <h2>Detection Engine</h2>
-        <p>Incoming values are scored instantly to flag unusual operating patterns.</p>
-      </article>
-      <article class="feature-card">
-        <span class="feature-kicker">03</span>
-        <h2>Explain + Predict</h2>
-        <p>The dashboard shows why a spike happened and what risk level it suggests next.</p>
-      </article>
-    </section>
-
-    <section class="status-band">
-      <div>
-        <span class="label">System Status</span>
-        <h2 id="status">Waiting for data...</h2>
+      <div class="sidebar-note">
+        <p class="sidebar-label">System Mode</p>
+        <strong>Single entry app</strong>
+        <p>Use the feature buttons to move between dedicated workspaces.</p>
       </div>
-      <div class="status-meta">
-        <div class="status-box">
-          <span class="label">Current Mode</span>
-          <strong id="mode-value">normal</strong>
-        </div>
-        <div class="status-box">
-          <span class="label">Last Refresh</span>
-          <strong id="last-refresh">--</strong>
-        </div>
-        <div class="status-box">
-          <span class="label">Auto Refresh</span>
-          <label class="toggle">
-            <input type="checkbox" id="auto-refresh" checked>
-            <span>Every 2 seconds</span>
-          </label>
-        </div>
-      </div>
-    </section>
+    </aside>
 
-    <section class="metric-grid">
-      <article class="metric-card cpu">
-        <div class="metric-head">
-          <span class="label">CPU</span>
-          <strong id="cpu-value">--%</strong>
+    <section class="dashboard-home">
+      <section class="home-hero enhanced-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">AI Monitoring Platform</p>
+          <h1>Operational Intelligence That Feels Like A Real Product</h1>
+          <p class="lead">
+            Explore a professional monitoring experience with dedicated pages for telemetry, anomaly detection,
+            explanation logic, prediction signals, and graph analytics.
+          </p>
+          <div class="hero-tags">
+            <span>Dynamic live data</span>
+            <span>Animated interface</span>
+            <span>Feature-based navigation</span>
+            <span>Professional monitoring UX</span>
+          </div>
         </div>
-        <div class="meter"><span id="cpu-bar"></span></div>
-      </article>
-      <article class="metric-card ram">
-        <div class="metric-head">
-          <span class="label">RAM</span>
-          <strong id="ram-value">--%</strong>
-        </div>
-        <div class="meter"><span id="ram-bar"></span></div>
-      </article>
-      <article class="metric-card disk">
-        <div class="metric-head">
-          <span class="label">Disk</span>
-          <strong id="disk-value">--%</strong>
-        </div>
-        <div class="meter"><span id="disk-bar"></span></div>
-      </article>
-    </section>
 
-    <section class="dashboard-grid">
-      <article class="panel chart-panel">
-        <div class="panel-head">
-          <div>
-            <span class="label">Graph Visualization</span>
-            <h3>Live Resource Trend</h3>
+        <div class="hero-visual">
+          <div class="floating-card floating-card-main">
+            <img
+              src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 260'><rect width='420' height='260' rx='28' fill='%230f2230'/><path d='M0 190 C75 160 120 210 180 170 C240 130 280 175 340 145 C372 129 394 122 420 128' fill='none' stroke='%231ad1a5' stroke-width='8' stroke-linecap='round'/><path d='M32 200 C72 182 126 188 164 168 C218 141 250 123 300 131 C348 138 372 171 398 162' fill='none' stroke='%2348a6ff' stroke-width='7' stroke-linecap='round'/><circle cx='302' cy='131' r='9' fill='%23ffd166'/><rect x='28' y='28' width='86' height='20' rx='10' fill='%23ffffff22'/><rect x='28' y='60' width='132' height='14' rx='7' fill='%23ffffff18'/><rect x='28' y='86' width='102' height='14' rx='7' fill='%23ffffff18'/><rect x='28' y='118' width='364' height='1' fill='%23ffffff12'/></svg>"
+              alt="Monitoring analytics illustration"
+            >
           </div>
-          <p class="panel-note">Rolling 12-point performance stream</p>
+          <div class="floating-card floating-card-small">
+            <img
+              src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 160'><rect width='220' height='160' rx='24' fill='%23fff7ef'/><circle cx='56' cy='56' r='26' fill='%23ffe0bf'/><path d='M108 104h74' stroke='%2316222b' stroke-width='10' stroke-linecap='round'/><path d='M108 74h52' stroke='%230d8f72' stroke-width='12' stroke-linecap='round'/><path d='M28 126h164' stroke='%23ead8c4' stroke-width='10' stroke-linecap='round'/></svg>"
+              alt="Feature summary illustration"
+            >
+          </div>
+          <div class="orb orb-one"></div>
+          <div class="orb orb-two"></div>
         </div>
-        <div class="chart-shell">
-          <canvas id="chart"></canvas>
-        </div>
-      </article>
+      </section>
 
-      <article class="panel insight-panel">
-        <div class="panel-head">
-          <div>
-            <span class="label">Decision Engine</span>
-            <h3>Current Analysis</h3>
-          </div>
-        </div>
-        <div class="insight-stack">
-          <div class="insight-row">
-            <span class="label-inline">Anomaly</span>
-            <span id="anomaly-value" class="pill">--</span>
-          </div>
-          <div class="insight-row">
-            <span class="label-inline">Reason</span>
-            <span id="reason-value">Waiting for data...</span>
-          </div>
-          <div class="insight-row">
-            <span class="label-inline">Prediction</span>
-            <span id="prediction-value">Waiting for data...</span>
-          </div>
-          <div class="insight-row">
-            <span class="label-inline">Timestamp</span>
-            <span id="timestamp-value">--</span>
-          </div>
-        </div>
-      </article>
-    </section>
+      <section class="feature-showcase">
+        <a class="nav-card wide-card" href="/page/monitoring">
+          <span class="feature-kicker">01</span>
+          <h2>Real-Time Monitoring</h2>
+          <p>Watch CPU, RAM, disk usage, health score, and system state update continuously.</p>
+          <span class="nav-link">Open workspace</span>
+        </a>
 
-    <section class="dashboard-grid secondary-grid">
-      <article class="panel">
-        <div class="panel-head">
-          <div>
-            <span class="label">Raw Output</span>
-            <h3>Latest API Response</h3>
-          </div>
-        </div>
-        <pre id="json-output">{}</pre>
-      </article>
+        <a class="nav-card" href="/page/anomaly">
+          <span class="feature-kicker">02</span>
+          <h2>ML Anomaly Detection</h2>
+          <p>Track anomaly flags, alert states, and anomaly history in a focused environment.</p>
+          <span class="nav-link">Open workspace</span>
+        </a>
 
-      <article class="panel">
-        <div class="panel-head">
-          <div>
-            <span class="label">Alert Trail</span>
-            <h3>Anomaly History</h3>
-          </div>
-        </div>
-        <ul id="history" class="history-list">
-          <li class="muted">No anomalies recorded yet.</li>
-        </ul>
-      </article>
+        <a class="nav-card" href="/page/explanation">
+          <span class="feature-kicker">03</span>
+          <h2>Explanation Engine</h2>
+          <p>Inspect the cause behind each system decision with clean structured reasoning.</p>
+          <span class="nav-link">Open workspace</span>
+        </a>
+
+        <a class="nav-card" href="/page/prediction">
+          <span class="feature-kicker">04</span>
+          <h2>Prediction System</h2>
+          <p>Review forecast levels, health-based interpretation, and next-risk estimates.</p>
+          <span class="nav-link">Open workspace</span>
+        </a>
+
+        <a class="nav-card" href="/page/visualization">
+          <span class="feature-kicker">05</span>
+          <h2>Graph Visualization</h2>
+          <p>Open a dedicated chart experience for cleaner trend analysis and presentation.</p>
+          <span class="nav-link">Open workspace</span>
+        </a>
+      </section>
     </section>
   </main>
-
-  <script src="/static/script.js"></script>
 </body>
 </html>

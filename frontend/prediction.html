@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediction System</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="page">
+    <nav class="top-nav">
+      <a href="/">Dashboard</a>
+      <a href="/page/monitoring">Monitoring</a>
+      <a href="/page/anomaly">Anomaly</a>
+      <a href="/page/explanation">Explanation</a>
+      <a href="/page/visualization">Visualization</a>
+    </nav>
+
+    <section class="sub-hero">
+      <div>
+        <p class="eyebrow">Feature Workspace</p>
+        <h1>Prediction System</h1>
+        <p class="lead">Forecast system stability with health scoring and live risk interpretation.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="refresh-btn" class="btn btn-primary">Refresh Prediction</button>
+      </div>
+    </section>
+
+    <section class="dashboard-grid secondary-grid">
+      <article class="panel signal-card signal-card-page">
+        <span class="label">System Health</span>
+        <strong id="health-score">--</strong>
+        <p id="health-caption">Waiting for live telemetry...</p>
+      </article>
+
+      <article class="panel insight-panel">
+        <div class="panel-head">
+          <div>
+            <span class="label">Forecast</span>
+            <h3>Prediction Summary</h3>
+          </div>
+        </div>
+        <div class="insight-stack">
+          <div class="insight-row">
+            <span class="label-inline">Prediction</span>
+            <span id="prediction-value">Waiting for data...</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Reason</span>
+            <span id="reason-value">Waiting for data...</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Mode</span>
+            <span id="mode-value">--</span>
+          </div>
+          <div class="insight-row">
+            <span class="label-inline">Last Refresh</span>
+            <span id="last-refresh">--</span>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
