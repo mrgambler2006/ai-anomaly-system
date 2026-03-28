@@ -34,19 +34,33 @@ class TelemetryPayload(BaseModel):
     source: str = "agent"
 
 
+def resolve_system_status(cpu_value, agent_connected=True):
+    if not agent_connected:
+        return "Agent offline"
+    if cpu_value >= 50:
+        return "Anomaly detected"
+    return "System operating normally"
+
+
+def resolve_current_mode(cpu_value):
+    if cpu_value >= 50:
+        return "high"
+    return "low"
+
+
 def current_cpu_range():
     if mode == "high":
         return {
-            "label": "70% - 100%",
-            "min": 70,
+            "label": "50% - 100%",
+            "min": 50,
             "max": 100,
             "category": "high-load",
         }
 
     return {
-        "label": "0% - 60%",
+        "label": "0% - 50%",
         "min": 0,
-        "max": 60,
+        "max": 50,
         "category": "normal",
     }
 
@@ -54,6 +68,7 @@ def current_cpu_range():
 def build_result(data, source="background-agent", hostname="local-system"):
     recent_history = get_recent_snapshots()
     analysis = analyze_system(data, recent_history, mode=mode)
+    current_mode = resolve_current_mode(data["cpu"])
 
     health_score = max(0, 100 - round((data["cpu"] + data["ram"] + data["disk"]) / 3))
     risk_percent = max(0, min(100, round(analysis["score"] * 20)))
@@ -68,14 +83,21 @@ def build_result(data, source="background-agent", hostname="local-system"):
         "prediction": analysis["prediction"],
         "anomaly_score": analysis["score"],
         "risk_percent": risk_percent,
-        "mode": mode,
-        "cpu_expected_range": current_cpu_range(),
+        "mode": current_mode,
+        "cpu_expected_range": {
+            "label": "50% - 100%" if current_mode == "high" else "0% - 50%",
+            "min": 50 if current_mode == "high" else 0,
+            "max": 100 if current_mode == "high" else 50,
+            "category": "high-load" if current_mode == "high" else "low-load",
+        },
         "health_score": health_score,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "refresh_interval_seconds": 10,
         "email_alerts_enabled": email_alerts_enabled(),
         "source": source,
         "hostname": hostname,
+        "agent_connected": True,
+        "system_status": resolve_system_status(data["cpu"], agent_connected=True),
     }
 
     save_snapshot(result)
@@ -131,6 +153,10 @@ def monitor():
         latest_copy = dict(latest)
         latest_copy["source"] = "background-agent"
         latest_copy["agent_connected"] = False
+        latest_copy["system_status"] = resolve_system_status(
+            latest_copy.get("data", {}).get("cpu", 0),
+            agent_connected=False,
+        )
         latest_copy["reason"] = "Background agent is currently offline. Showing last known system snapshot."
         latest_copy["prediction"] = "Agent offline: showing last known status"
         return latest_copy
@@ -156,6 +182,7 @@ def monitor():
         "source": "agent-unavailable",
         "hostname": "unknown",
         "agent_connected": False,
+        "system_status": "Waiting for live data",
     }
 
 
@@ -167,7 +194,6 @@ def receive_agent_telemetry(payload: TelemetryPayload):
         "disk": round(payload.disk, 2),
     }
     result = build_result(data, source="background-agent", hostname=payload.hostname)
-    result["agent_connected"] = True
     return result
 
 

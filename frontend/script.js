@@ -3,7 +3,6 @@ const API_BASE = "";
 const statusEl = document.getElementById("status");
 const modeEl = document.getElementById("mode-value");
 const cpuEl = document.getElementById("cpu-value");
-const cpuRangeEl = document.getElementById("cpu-range-value");
 const ramEl = document.getElementById("ram-value");
 const diskEl = document.getElementById("disk-value");
 const anomalyEl = document.getElementById("anomaly-value");
@@ -19,8 +18,7 @@ const lastRefreshEl = document.getElementById("last-refresh");
 const cpuBarEl = document.getElementById("cpu-bar");
 const ramBarEl = document.getElementById("ram-bar");
 const diskBarEl = document.getElementById("disk-bar");
-const emailEnabledEl = document.getElementById("email-enabled-value");
-const emailStatusEl = document.getElementById("email-status-value");
+const alertBox = document.getElementById("alertBox");
 
 const chartCanvas = document.getElementById("chart");
 const chartContext = chartCanvas ? chartCanvas.getContext("2d") : null;
@@ -38,6 +36,8 @@ const pageRole = new URLSearchParams(window.location.search).get("role");
 const criticalChannel = "BroadcastChannel" in window ? new BroadcastChannel("ai-anomaly-critical") : null;
 let closeProtectionEnabled = false;
 let lastBrowserVoiceAt = 0;
+let refreshInFlight = false;
+let latestMonitorTimestamp = null;
 
 sessionStorage.setItem("tabId", tabId);
 
@@ -260,12 +260,41 @@ chart = new Chart(chartContext, {
 });
 }
 
-async function requestJson(path) {
-  const response = await fetch(`${API_BASE}${path}`);
+async function requestJson(path, options = {}) {
+  const url = new URL(`${API_BASE}${path}`, window.location.origin);
+  if (options.forceFresh) {
+    url.searchParams.set("_ts", Date.now().toString());
+  }
+
+  const response = await fetch(url.toString(), {
+    cache: "no-store"
+  });
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}`);
   }
   return response.json();
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+async function fetchMonitorResult(options = {}) {
+  const previousTimestamp = latestMonitorTimestamp;
+  const attempts = options.forceFresh ? 4 : 1;
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const result = await requestJson("/monitor", { forceFresh: options.forceFresh });
+    if (!options.forceFresh || !previousTimestamp || result.timestamp !== previousTimestamp) {
+      return result;
+    }
+
+    if (attempt < attempts - 1) {
+      await sleep(500);
+    }
+  }
+
+  return requestJson("/monitor", { forceFresh: true });
 }
 
 function formatTime(timestamp) {
@@ -421,29 +450,63 @@ function handleCriticalEvent(result) {
   );
 }
 
+function deriveSystemStatus(result) {
+  const backendStatus = result.system_status;
+  if (backendStatus === "Anomaly detected") {
+    return {
+      text: "Anomaly detected",
+      className: "status-alert"
+    };
+  }
+
+  if (backendStatus === "Agent offline") {
+    return {
+      text: "Agent offline",
+      className: "status-alert"
+    };
+  }
+
+  if (backendStatus === "Waiting for live data") {
+    return {
+      text: "Waiting for live data",
+      className: "status-alert"
+    };
+  }
+
+  return {
+    text: "System operating normally",
+    className: "status-ok"
+  };
+}
+
 function updateDashboard(result) {
+  latestMonitorTimestamp = result.timestamp || latestMonitorTimestamp;
+  const hasHighCpu = Number(result.data?.cpu) >= 50;
   if (cpuEl) cpuEl.textContent = `${result.data.cpu}%`;
-  if (cpuRangeEl && result.cpu_expected_range) cpuRangeEl.textContent = result.cpu_expected_range.label;
   if (ramEl) ramEl.textContent = `${result.data.ram}%`;
   if (diskEl) diskEl.textContent = `${result.data.disk}%`;
   if (anomalyEl) {
-    anomalyEl.textContent = result.anomaly ? "Detected" : "Normal";
-    anomalyEl.className = `pill ${result.anomaly ? "anomaly-yes" : "anomaly-no"}`;
+    anomalyEl.textContent = hasHighCpu ? "Detected" : "Normal";
+    anomalyEl.className = `pill ${hasHighCpu ? "anomaly-yes" : "anomaly-no"}`;
   }
+  if (modeEl) modeEl.textContent = hasHighCpu ? "high" : "normal";
   if (reasonEl) reasonEl.textContent = result.reason;
   if (predictionEl) predictionEl.textContent = result.prediction;
   if (timestampEl) timestampEl.textContent = new Date(result.timestamp).toLocaleString();
-  if (modeEl) modeEl.textContent = result.mode;
   if (lastRefreshEl) lastRefreshEl.textContent = formatTime(result.timestamp);
-  if (emailEnabledEl) {
-    emailEnabledEl.textContent = result.email_alerts_enabled ? "Enabled" : "Not Configured";
-    emailEnabledEl.className = `pill ${result.email_alerts_enabled ? "anomaly-no" : "anomaly-yes"}`;
-  }
-  if (emailStatusEl) emailStatusEl.textContent = result.email_alert_status || "No alert sent";
 
   if (statusEl) {
-    statusEl.textContent = result.anomaly ? "Anomaly detected" : "System operating normally";
-    statusEl.className = result.anomaly ? "status-alert" : "status-ok";
+    const systemStatus = deriveSystemStatus(result);
+    statusEl.textContent = systemStatus.text;
+    statusEl.className = systemStatus.className;
+  }
+
+  if (alertBox) {
+    if (hasHighCpu) {
+      alertBox.classList.add("pulse-alert");
+    } else {
+      alertBox.classList.remove("pulse-alert");
+    }
   }
 
   if (jsonOutputEl) jsonOutputEl.textContent = JSON.stringify(result, null, 2);
@@ -455,33 +518,6 @@ function updateDashboard(result) {
     handleCriticalEvent(result);
   } else {
     disableCloseProtection();
-  }
-}
-
-function applyImmediateModeState(mode) {
-  if (modeEl) {
-    modeEl.textContent = mode;
-  }
-
-  if (cpuRangeEl) {
-    cpuRangeEl.textContent = mode === "high" ? "70% - 100%" : "0% - 60%";
-  }
-
-  if (statusEl) {
-    statusEl.textContent = mode === "high" ? "High load mode activated" : "System operating normally";
-    statusEl.className = mode === "high" ? "status-alert" : "status-ok";
-  }
-
-  if (reasonEl) {
-    reasonEl.textContent =
-      mode === "high"
-        ? "High load mode is active. Monitoring is now using the high processing CPU range."
-        : "System activity is within the normal operating range";
-  }
-
-  if (predictionEl) {
-    predictionEl.textContent =
-      mode === "high" ? "Monitoring high-load thresholds with real system data" : "Low risk: System is stable";
   }
 }
 
@@ -509,19 +545,39 @@ function updateHistory(records) {
     .join("");
 }
 
-async function refreshDashboard() {
+function setRefreshButtonState(isRefreshing) {
+  if (!refreshBtn) {
+    return;
+  }
+
+  refreshBtn.disabled = isRefreshing;
+  const idleLabel = refreshBtn.dataset.idleLabel || refreshBtn.textContent || "Refresh";
+  refreshBtn.dataset.idleLabel = idleLabel;
+  refreshBtn.textContent = isRefreshing ? "Refreshing..." : idleLabel;
+}
+
+async function refreshDashboard(options = {}) {
+  if (refreshInFlight) {
+    return null;
+  }
+
+  refreshInFlight = true;
+  setRefreshButtonState(true);
+
   try {
-    if (chartCanvas && chartState.labels.length === 0) {
-      const telemetryHistory = await requestJson("/telemetry-history");
+    const shouldReloadHistory = options.forceFresh || (chartCanvas && chartState.labels.length === 0);
+
+    if (shouldReloadHistory) {
+      const telemetryHistory = await requestJson("/telemetry-history", { forceFresh: options.forceFresh });
       setChartStateFromTelemetry(telemetryHistory);
     }
 
-    const result = await requestJson("/monitor");
+    const result = await fetchMonitorResult(options);
     currentRefreshInterval = (result.refresh_interval_seconds || 300) * 1000;
     syncAutoRefresh();
     updateDashboard(result);
 
-    const history = await requestJson("/history");
+    const history = await requestJson("/history", { forceFresh: options.forceFresh });
     updateHistory(history);
     return result;
   } catch (error) {
@@ -533,19 +589,9 @@ async function refreshDashboard() {
     if (predictionEl) predictionEl.textContent = "Start the server and try again.";
     if (jsonOutputEl) jsonOutputEl.textContent = error.message;
     return null;
-  }
-}
-
-async function setMode(mode) {
-  try {
-    applyImmediateModeState(mode);
-    await requestJson(`/set-mode/${mode}`);
-    await refreshDashboard();
-  } catch (error) {
-    if (statusEl) {
-      statusEl.textContent = "Could not switch mode";
-      statusEl.className = "status-alert";
-    }
+  } finally {
+    refreshInFlight = false;
+    setRefreshButtonState(false);
   }
 }
 
@@ -591,13 +637,9 @@ if (criticalChannel) {
   };
 }
 
-const normalBtn = document.getElementById("normal-btn");
-const highBtn = document.getElementById("high-btn");
 const refreshBtn = document.getElementById("refresh-btn");
 
-if (normalBtn) normalBtn.addEventListener("click", () => setMode("normal"));
-if (highBtn) highBtn.addEventListener("click", () => setMode("high"));
-if (refreshBtn) refreshBtn.addEventListener("click", refreshDashboard);
+if (refreshBtn) refreshBtn.addEventListener("click", () => refreshDashboard({ forceFresh: true }));
 if (autoRefreshEl) autoRefreshEl.addEventListener("change", syncAutoRefresh);
 
 syncAutoRefresh();

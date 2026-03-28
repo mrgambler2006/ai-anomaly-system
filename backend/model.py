@@ -16,6 +16,7 @@ def analyze_system(data, history, mode="normal"):
     cpu = data["cpu"]
     ram = data["ram"]
     disk = data["disk"]
+    cpu_high_load = cpu >= 50
 
     history = history[-20:]
     has_baseline = len(history) >= 5
@@ -36,11 +37,11 @@ def analyze_system(data, history, mode="normal"):
     disk_z = abs(disk - disk_mean) / disk_std
 
     if mode == "high":
-        overload_limits = ((cpu, 70), (ram, 65), (disk, 70))
+        overload_limits = ((cpu, 50), (ram, 65), (disk, 70))
         critical_limits = ((cpu, 85), (ram, 88), (disk, 92))
         anomaly_score_limit = 2.2
     else:
-        overload_limits = ((cpu, 80), (ram, 78), (disk, 82))
+        overload_limits = ((cpu, 50), (ram, 78), (disk, 82))
         critical_limits = ((cpu, 92), (ram, 93), (disk, 96))
         anomaly_score_limit = 3.1
 
@@ -57,14 +58,14 @@ def analyze_system(data, history, mode="normal"):
     score += overload_metrics * 0.75 + critical_metrics * 1.2
     score = round(score, 2)
 
-    anomaly = score >= anomaly_score_limit or critical_metrics >= 1 or overload_metrics >= 1
+    anomaly = score >= anomaly_score_limit or critical_metrics >= 1 or overload_metrics >= 1 or cpu_high_load
     critical = critical_metrics >= 1 or (
         (mode == "high" and cpu >= 85 and ram >= 88)
         or (mode != "high" and cpu >= 92 and ram >= 93)
     )
-    overloaded = overload_metrics >= 1
+    overloaded = overload_metrics >= 1 or cpu_high_load
 
-    if mode == "high" and cpu >= 70 and ram < 88 and critical_metrics == 0:
+    if cpu_high_load and ram < 88 and critical_metrics == 0:
         reason = "CPU is in the high load range because too many processes are running"
     elif critical:
         reason = "CPU and RAM are simultaneously overloaded, indicating a likely crash condition"
@@ -79,9 +80,9 @@ def analyze_system(data, history, mode="normal"):
     else:
         reason = "System activity is within the recent operating baseline"
 
-    if critical:
-        prediction = "High risk: System may crash soon"
-    elif anomaly:
+    if critical or cpu >= 85 or (cpu >= 75 and ram >= 80):
+        prediction = "High risk: System may become unstable soon"
+    elif anomaly or cpu >= 50 or ram >= 78 or disk >= 82 or score >= 2.2:
         prediction = "Medium risk: System may become unstable"
     else:
         prediction = "Low risk: System is stable"

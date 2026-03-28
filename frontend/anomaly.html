@@ -6,7 +6,17 @@
   <title>Anomaly Detection</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body data-anomaly-state="normal">
+  <div class="anomaly-alert-layer" aria-hidden="true">
+    <div id="alertBox" class="anomaly-alert-box">
+      <div class="anomaly-alert-icon" aria-hidden="true">⚠️</div>
+      <div class="anomaly-alert-copy">
+        <strong>Anomaly Detected</strong>
+        <p>CPU usage exceeded safe threshold (85%)</p>
+      </div>
+      <button class="anomaly-alert-dismiss" type="button">Dismiss</button>
+    </div>
+  </div>
   <main class="page">
     <nav class="top-nav">
       <a href="/">Dashboard</a>

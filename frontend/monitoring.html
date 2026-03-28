@@ -20,11 +20,9 @@
       <div>
         <p class="eyebrow">Feature Workspace</p>
         <h1>Real-Time Monitoring</h1>
-        <p class="lead">Live operating data, system mode control, and instant health updates.</p>
+        <p class="lead">Live operating data and instant health updates from the background monitoring agent.</p>
       </div>
       <div class="hero-actions">
-        <button id="normal-btn" class="btn btn-secondary">Normal Mode</button>
-        <button id="high-btn" class="btn btn-primary">High Load Mode</button>
         <button id="refresh-btn" class="btn btn-ghost">Refresh Now</button>
       </div>
     </section>
@@ -36,12 +34,12 @@
       </div>
       <div class="status-meta">
         <div class="status-box">
-          <span class="label">Current Mode</span>
-          <strong id="mode-value">normal</strong>
+          <span class="label">LOW CPU RANGE</span>
+          <strong>0% - 50%</strong>
         </div>
         <div class="status-box">
-          <span class="label">CPU Range</span>
-          <strong id="cpu-range-value">0% - 60%</strong>
+          <span class="label">HIGH CPU RANGE</span>
+          <strong>50% - 100%</strong>
         </div>
         <div class="status-box">
           <span class="label">Last Refresh</span>
@@ -87,26 +85,8 @@
       <p id="health-caption">Waiting for live telemetry...</p>
     </section>
 
-    <section class="panel email-status-panel">
-      <div class="panel-head">
-        <div>
-          <span class="label">Email Alerts</span>
-          <h3>Notification Status</h3>
-        </div>
-      </div>
-      <div class="insight-stack">
-        <div class="insight-row">
-          <span class="label-inline">Configured</span>
-          <span id="email-enabled-value" class="pill">--</span>
-        </div>
-        <div class="insight-row">
-          <span class="label-inline">Last Email Action</span>
-          <span id="email-status-value">Waiting for data...</span>
-        </div>
-      </div>
-    </section>
   </main>
 
-  <script src="/static/script.js"></script>
+  <script src="/static/script.js?v=20260328-2"></script>
 </body>
 </html>

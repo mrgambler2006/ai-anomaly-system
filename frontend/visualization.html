@@ -21,33 +21,102 @@
       <div>
         <p class="eyebrow">Feature Workspace</p>
         <h1>Graph Visualization</h1>
-        <p class="lead">A presentation-ready chart screen for live trend inspection and resource tracking.</p>
+        <p class="lead">A live analytics workspace for tracking CPU, RAM, and Disk behavior with professional trend visibility.</p>
       </div>
       <div class="hero-actions">
         <button id="refresh-btn" class="btn btn-primary">Refresh Chart</button>
       </div>
     </section>
 
-    <section class="panel chart-panel">
-      <div class="panel-head">
+    <section class="visualization-grid">
+      <article class="panel visualization-summary">
+        <div class="panel-head">
+          <div>
+            <span class="label">Live Overview</span>
+            <h3 id="status">Waiting for data...</h3>
+          </div>
+          <div class="visualization-chip">
+            <span class="label">Last Refresh</span>
+            <strong id="last-refresh">--</strong>
+          </div>
+        </div>
+        <div class="visualization-stats">
+          <div class="visual-stat cpu">
+            <span class="label-inline">CPU</span>
+            <strong id="cpu-value">--%</strong>
+          </div>
+          <div class="visual-stat ram">
+            <span class="label-inline">RAM</span>
+            <strong id="ram-value">--%</strong>
+          </div>
+          <div class="visual-stat disk">
+            <span class="label-inline">Disk</span>
+            <strong id="disk-value">--%</strong>
+          </div>
+        </div>
+        <div class="visualization-notes">
+          <div class="visual-note">
+            <span class="label-inline">Prediction</span>
+            <span id="prediction-value">Waiting for data...</span>
+          </div>
+          <div class="visual-note">
+            <span class="label-inline">Reason</span>
+            <span id="reason-value">Waiting for data...</span>
+          </div>
+        </div>
+      </article>
+
+      <section class="panel chart-panel visualization-chart-panel">
+        <div class="panel-head">
+          <div>
+            <span class="label">Visualization</span>
+            <h3>Live Resource Trend</h3>
+          </div>
+          <div class="status-box">
+            <span class="label">Auto Refresh</span>
+            <label class="toggle">
+              <input type="checkbox" id="auto-refresh" checked>
+              <span>Every 10 seconds</span>
+            </label>
+          </div>
+        </div>
+        <div class="chart-shell large-chart">
+          <canvas id="chart"></canvas>
+        </div>
+      </section>
+
+      <article class="panel visualization-side-panel">
         <div>
-          <span class="label">Visualization</span>
-          <h3>Live Resource Trend</h3>
+          <span class="label">Reading Guide</span>
+          <h3>How To Read This Live Graph</h3>
         </div>
-        <div class="status-box">
-          <span class="label">Auto Refresh</span>
-          <label class="toggle">
-            <input type="checkbox" id="auto-refresh" checked>
-            <span>Every 10 seconds</span>
-          </label>
+        <div class="visualization-guide">
+          <div class="guide-row">
+            <span class="guide-dot cpu"></span>
+            <div>
+              <strong>CPU trend</strong>
+              <p>Red tracks active processor pressure and should stay below the anomaly threshold.</p>
+            </div>
+          </div>
+          <div class="guide-row">
+            <span class="guide-dot ram"></span>
+            <div>
+              <strong>RAM trend</strong>
+              <p>Blue shows memory pressure building over time during active workloads.</p>
+            </div>
+          </div>
+          <div class="guide-row">
+            <span class="guide-dot disk"></span>
+            <div>
+              <strong>Disk trend</strong>
+              <p>Green highlights storage usage shifts and sustained I/O-heavy activity.</p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="chart-shell large-chart">
-        <canvas id="chart"></canvas>
-      </div>
+      </article>
     </section>
   </main>
 
-  <script src="/static/script.js"></script>
+  <script src="/static/script.js?v=20260328-3"></script>
 </body>
 </html>

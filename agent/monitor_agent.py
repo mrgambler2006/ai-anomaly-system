@@ -231,14 +231,14 @@ class BackgroundMonitorAgent:
 
         current_data = result.get("data", {})
         current_cpu = current_data.get("cpu", 0)
-        if current_cpu < 70:
+        if current_cpu < 50:
             return False
 
         if new_process_count > 0:
             return True
 
         if self.previous_result is None:
-            return current_cpu >= 70
+            return current_cpu >= 50
 
         previous_data = self.previous_result.get("data", {})
         cpu_jump = current_data.get("cpu", 0) - previous_data.get("cpu", 0)
@@ -249,7 +249,7 @@ class BackgroundMonitorAgent:
             cpu_jump >= 1
             or ram_jump >= 1
             or disk_jump >= 1
-            or current_data.get("cpu", 0) >= 70
+            or current_data.get("cpu", 0) >= 50
         )
 
     def should_alert_for_real_cpu_overload(self, result):
@@ -257,7 +257,7 @@ class BackgroundMonitorAgent:
         previous_cpu = 0
         if self.previous_result is not None:
             previous_cpu = self.previous_result.get("data", {}).get("cpu", 0)
-        return current_cpu >= 70 and previous_cpu < 70
+        return current_cpu >= 50 and previous_cpu < 50
 
     def switched_to_high_mode(self, result):
         current_mode = result.get("mode")
@@ -268,7 +268,7 @@ class BackgroundMonitorAgent:
             return False
 
         current_cpu = result.get("data", {}).get("cpu", 0)
-        return self.switched_to_high_mode(result) and current_cpu >= 70
+        return self.switched_to_high_mode(result) and current_cpu >= 50
 
     def trigger_immediate_high_mode_alert(self, result):
         self.show_cpu_overload_popup(result)
